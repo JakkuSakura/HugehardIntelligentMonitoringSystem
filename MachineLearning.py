@@ -2,6 +2,7 @@ import face_recognition
 import cv2
 import argparse
 
+
 class MachineLearning:
     def __init__(self):
         pass
@@ -16,7 +17,6 @@ class MachineLearning:
         image = face_recognition.load_image_file(img_file_addr)
         face_locations = face_recognition.face_locations(image, model="cnn")
         return face_locations
-
 
     def face_encoding(self, img_file_addr):
         image = face_recognition.load_image_file(img_file_addr)
@@ -39,11 +39,13 @@ class MachineLearning:
             roi = frame[location[0]:location[2], location[3]:location[1]]
             spt.append(roi)
         return spt
+
+
 if __name__ == '__main__':
     img = cv2.imread("233.png")
     img2 = MachineLearning().face_split(img)[0]
     cv2.namedWindow('img')
     cv2.imshow('img', img2)
     cv2.waitKey(0)
-    #ml = MachineLearning()
-    #print(ml.face_location("image/4.jpg"))
+    # ml = MachineLearning()
+    # print(ml.face_location("image/4.jpg"))

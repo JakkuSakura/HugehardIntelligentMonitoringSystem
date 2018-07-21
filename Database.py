@@ -10,43 +10,38 @@ class Database:
         self.cur = self.conn.cursor()
 
     def create_monitorsDB(self):
-        self.cur.execute("""CREATE TABLE IF NOT EXISTS monitors 
+        self.execute(("""CREATE TABLE IF NOT EXISTS monitors 
                             (
                                 id integer PRIMARY KEY AUTOINCREMENT, 
                                 addr text, 
                                 physical_location text,
                                 type text
                             )
-                        """)
-        self.conn.commit()
+                        """,))
 
     def monitor_entry(self, monitor):
-        self.cur.execute("""INSERT INTO monitors VALUES (?,?,?,?)""", (
-            monitor.id, monitor.addr, monitor.physical_location, monitor.type))
-        self.conn.commit()
+        self.execute(("""INSERT INTO monitors VALUES (?,?,?,?)""", (
+            monitor.id, monitor.addr, monitor.physical_location, monitor.type),))
 
     def monitor_read_byID(self, id):
-        rst = self.cur.execute('SELECT * FROM monitors WHERE id = ?', (id,))
-        return rst.fetchall()[0]
+        rst = self.query(('SELECT * FROM monitors WHERE id = ?', (id,),))
+        return rst.fetchone()
 
     def monitor_readAll(self):
-        self.cur.execute('SELECT * FROM monitors')
-        monitors = self.cur.fetchall()
+        monitors = self.query('SELECT * FROM monitors').fetchall()
         r_monitors = []
         for e in monitors:
             r_monitors.append(Monitor(*e))
         return r_monitors
 
     def monitor_remove_byID(self, id):
-        self.cur.execute('DELETE FROM monitors WHERE id = ?', (id,))
-        self.conn.commit()
+        self.execute(('DELETE FROM monitors WHERE id = ?', (id,),))
 
     def monitor_clearAll(self):
-        self.cur.execute('DELETE FROM monitors')
-        self.conn.commit()
+        self.execute(('DELETE FROM monitors',))
 
     def create_studentsDB(self):
-        self.cur.execute(
+        self.execute((
             """
                 CREATE TABLE IF NOT EXISTS Students
                 (
@@ -58,8 +53,7 @@ class Database:
                     grade varchar(10),
                     class varchar(10)
                 )
-            """)
-        self.conn.commit()
+            """,))
 
     def execute(self, sql):
         result = self.cur.execute(*sql)
@@ -73,34 +67,38 @@ class Database:
         self.cur.close()
         self.conn.close()
 
-    def student_entry(self, student):
-        self.cur.execute("""INSERT INTO Students VALUES (?,?,?,?,?,?,?)""", (
+    def student_update(self, student):
+        self.execute(("""INSERT INTO Students VALUES (?,?,?,?,?,?,?)""", (
             student.id, student.name, student.gender, student.birthday, student.student_id, student.grade,
-            student.clas))
-        self.conn.commit()
+            student.clas)))
+
+    def student_entry(self, student):
+        self.execute(("""INSERT INTO Students VALUES (?,?,?,?,?,?,?)""", (
+            student.id, student.name, student.gender, student.birthday, student.student_id, student.grade,
+            student.clas)))
 
     def student_read_byID(self, id):
-        stu = self.cur.execute('SELECT * FROM Students WHERE id = ?', (id,)).fetchone()
+        stu = self.query(('SELECT * FROM Students WHERE id = ?', (id,))).fetchone()
         if stu:
             return Student(*stu)
         else:
             return None
 
+    def student_max_ID(self):
+        return self.query('SELECT MAX(id) FROM Students')
+
     def student_readAll(self):
-        rst = self.cur.execute('SELECT * FROM Students')
+        rst = self.execute('SELECT * FROM Students')
         r_students = []
         for e in rst:
             r_students.append(Student(*e))
         return r_students
 
     def student_remove_byID(self, id):
-        self.cur.execute('DELETE FROM Students WHERE id = ?', (id,))
-        self.conn.commit()
+        self.execute(('DELETE FROM Students WHERE id = ?', (id,)))
 
     def student_clearAll(self):
-        self.cur.execute('DELETE FROM Students')
-        self.conn.commit()
-
+        self.execute(('DELETE FROM Students'))
 
 
 if __name__ == '__main__':
