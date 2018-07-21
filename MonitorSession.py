@@ -26,9 +26,8 @@ class MonitorSession:
             This method shall be used to fetch a pic from a current monitor stream
         :return:
         """
-
+        '''
         frame_num = 1
-
         while self.cap.isOpened():
 
             ret, frame = self.cap.read()
@@ -46,17 +45,28 @@ class MonitorSession:
 
             if cv2.waitKey(1) == ord('q'):
                 break
-
-        raise NotCompleted()
+        '''
+        if self.cap.isOpened():
+            frame = self.cap.read()
+            #cv2.imshow('frame', frame)
+            #cv2.imwrite('image' + str(frame_num) + '.jpg', frame)
+            return frame
 
     def clean(self):
         self.cap.release()
         cv2.destroyAllWindows()
 
-
 if __name__ == '__main__':
-    session = MonitorSession()
-    session.setAddr("rtmp://live.hkstv.hk.lxdns.com/live/hks")
-    session.connect()
-    session.section()
-    session.clean()
+    session1 = MonitorSession()
+    session1.setAddr("rtmp://192.168.137.149/live")
+    session1.connect()
+    session1.section()
+    session1.clean()
+    '''
+    session2 = MonitorSession()
+    session2.setAddr("rtmp://192.168.137.149/live")
+    session2.connect()
+    session2.section()
+    session2.clean()
+    '''
+
