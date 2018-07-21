@@ -26,7 +26,7 @@ class Event:
     def get_monitor_id(self):
         return self.monitor_id
 
-    def get_monitor_id(self, get_monitor_id):
+    def set_monitor_id(self, get_monitor_id):
         self.get_monitor_id = get_monitor_id
 
     def __str__(self):

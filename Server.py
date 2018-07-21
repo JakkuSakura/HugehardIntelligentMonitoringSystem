@@ -22,7 +22,7 @@ class Backend:
         self.face_capture = FaceCapture(self.database, self.machine_learning, self.students)
 
     def read_config(self):
-        for e in self.database.monitor_readAll():
+        for e in self.database.monitor_read_all():
             self.monitor_pool.addMonitor(e)
 
     def read_encodings(self):

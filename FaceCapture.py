@@ -65,7 +65,7 @@ class FaceCapture:
                 if not rst:
                     stu = Student(None, "Unkonwn", "", "", "", "", "")
                     self.database.student_entry(stu)
-                    stu.set_id(self.database.student_max_ID())
+                    stu.set_id(self.database.student_max_id())
                     self.students.append(stu)
 
                 else:
@@ -75,7 +75,7 @@ class FaceCapture:
 
 
 if __name__ == '__main__':
-    Database().student_clearAll()
+    Database().student_clear_all()
     # session1 = Monitor()
     # session1.setAddr(0)
     # session1.connect()
