@@ -32,6 +32,12 @@ class Student:
     def get_clas(self):
         return self.clas
 
+class Monitor:
+    def __init__(self, id, addr, physical_location, type):
+        self.id = id
+        self.addr = addr
+        self.physical_location = physical_location
+        self.type = type
 
 class Database:
     def __init__(self):
@@ -43,9 +49,35 @@ class Database:
                             (
                                 id integer PRIMARY KEY AUTOINCREMENT, 
                                 addr text, 
-                                physical_location text
+                                physical_location text,
+                                type text
                             )
                         """)
+        self.conn.commit()
+
+    def monitor_entry(self, monitor):
+        self.cur.execute("""INSERT INTO monitors VALUES (?,?,?,?)""", (
+        monitor.id, monitor.addr, monitor.physical_location, monitor.type))
+        self.conn.commit()
+
+    def monitor_read_byID(self, id):
+        self.cur.execute('SELECT * FROM monitors WHERE id = ?', (id,))
+        for row in self.cur.fetchall():
+            print(row)
+        self.conn.commit()
+
+    def monitor_readAll(self):
+        self.cur.execute('SELECT * FROM monitors')
+        monitors = self.cur.fetchall()
+        self.conn.commit()
+        return monitors
+
+    def monitor_remove_byID(self, id):
+        self.cur.execute('DELETE FROM monitors WHERE id = ?', (id,))
+        self.conn.commit()
+
+    def monitor_clearAll(self):
+        self.cur.execute('DELETE FROM monitors')
         self.conn.commit()
 
     def create_studentsDB(self):
@@ -53,7 +85,7 @@ class Database:
             """
                 CREATE TABLE IF NOT EXISTS Students
                 (
-                    id integer PRIMARY KEY, 
+                    id integer PRIMARY KEY AUTOINCREMENT, 
                     name varchar(20),
                     gender varchar(2),
                     birthday date,
@@ -95,11 +127,11 @@ class Database:
             print(row)
         self.conn.commit()
 
-    def student_remove(self, id):
+    def student_remove_byID(self, id):
         self.cur.execute('DELETE FROM Students WHERE id = ?', (id,))
         self.conn.commit()
 
-    def student_clear(self):
+    def student_clearAll(self):
         self.cur.execute('DELETE FROM Students')
         self.conn.commit()
 
@@ -125,12 +157,18 @@ if __name__ == '__main__':
         r"""
             CREATE UNIQUE INDEX students_id_uindex ON `students` (id);
         """,))
-'''
+
 root.create_studentsDB()
-# root.student_remove(1)
-# root.student_clear()
+root.student_remove_byID(1)
+root.student_clearAll()
 student1 = Student(None, 'b', 'aa', 2018, 1, 1, 1)
 root.student_entry(student1)
-# root.student_read_byID(2)
+root.student_read_byID(2)
 root.student_readAll()
+
+root.create_monitorsDB()
+monitor1 = Monitor(None, 'abc', 'abc', 'abc')
+root.monitor_readAll()
+'''
+print(root.monitor_readAll())
 root.clean()

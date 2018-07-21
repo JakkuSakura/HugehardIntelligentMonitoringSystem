@@ -3,7 +3,7 @@ CREATE TABLE monitors
 (
     id integer PRIMARY KEY AUTOINCREMENT,
     addr text,
-    physics_location text
+    physics_location text,
     type text
 );
 CREATE UNIQUE INDEX monitors_id_uindex ON monitors (id)
