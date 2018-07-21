@@ -13,6 +13,8 @@ class MonitorPool:
     def getMonitor(self, index):
         return self.monitors[index]
 
-    def foreachMonitor(self, func):
-        for e in self.monitors:
-            func(e)
+    def getMonitors(self):
+        return self.monitors
+
+    def remove(self, monitor):
+        self.monitors.remove(monitor)

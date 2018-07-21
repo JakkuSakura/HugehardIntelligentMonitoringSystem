@@ -80,7 +80,11 @@ class Database:
         self.conn.commit()
 
     def student_read_byID(self, id):
-        return Student(*self.cur.execute('SELECT * FROM Students WHERE id = ?', (id,)).fetchone())
+        stu = self.cur.execute('SELECT * FROM Students WHERE id = ?', (id,)).fetchone()
+        if stu:
+            return Student(*stu)
+        else:
+            return None
 
     def student_readAll(self):
         rst = self.cur.execute('SELECT * FROM Students')
@@ -98,9 +102,9 @@ class Database:
         self.conn.commit()
 
 
-root = Database()
 
 if __name__ == '__main__':
+    root = Database()
     root.create_studentsDB()
     root.student_remove_byID(1)
     root.student_clearAll()
