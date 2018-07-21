@@ -32,6 +32,10 @@ class Student:
     def get_clas(self):
         return self.clas
 
+    def __str__(self):
+        return "Student({}, {}, {}, {})".format(self.id, self.name, self.grade, self.clas)
+
+
 class Monitor:
     def __init__(self, id, addr, physical_location, type):
         self.id = id
@@ -41,7 +45,7 @@ class Monitor:
 
     def get_id(self):
         return self.id
-    
+
     def get_addr(self):
         return self.addr
 
@@ -50,6 +54,10 @@ class Monitor:
 
     def get_type(self):
         return self.type
+
+    def __str__(self):
+        return "Monitor({}, {}, {}, {})".format(self.id, self.addr, self.physical_location, self.type)
+
 
 class Database:
     def __init__(self):
@@ -69,20 +77,20 @@ class Database:
 
     def monitor_entry(self, monitor):
         self.cur.execute("""INSERT INTO monitors VALUES (?,?,?,?)""", (
-        monitor.id, monitor.addr, monitor.physical_location, monitor.type))
+            monitor.id, monitor.addr, monitor.physical_location, monitor.type))
         self.conn.commit()
 
     def monitor_read_byID(self, id):
-        self.cur.execute('SELECT * FROM monitors WHERE id = ?', (id,))
-        for row in self.cur.fetchall():
-            print(row)
-        self.conn.commit()
+        rst = self.cur.execute('SELECT * FROM monitors WHERE id = ?', (id,))
+        return rst.fetchall()[0]
 
     def monitor_readAll(self):
         self.cur.execute('SELECT * FROM monitors')
         monitors = self.cur.fetchall()
-        self.conn.commit()
-        return monitors
+        r_monitors = []
+        for e in monitors:
+            r_monitors.append(Monitor(*e))
+        return r_monitors
 
     def monitor_remove_byID(self, id):
         self.cur.execute('DELETE FROM monitors WHERE id = ?', (id,))
@@ -108,7 +116,6 @@ class Database:
             """)
         self.conn.commit()
 
-    '''
     def execute(self, sql):
         result = self.cur.execute(*sql)
         self.conn.commit()
@@ -116,7 +123,6 @@ class Database:
 
     def query(self, sql):
         return self.cur.execute(*sql)
-    '''
 
     def clean(self):
         self.cur.close()
@@ -124,20 +130,19 @@ class Database:
 
     def student_entry(self, student):
         self.cur.execute("""INSERT INTO Students VALUES (?,?,?,?,?,?,?)""", (
-        student.id, student.name, student.gender, student.birthday, student.student_id, student.grade, student.clas))
+            student.id, student.name, student.gender, student.birthday, student.student_id, student.grade,
+            student.clas))
         self.conn.commit()
 
     def student_read_byID(self, id):
-        self.cur.execute('SELECT * FROM Students WHERE id = ?', (id,))
-        for row in self.cur.fetchall():
-            print(row)
-        self.conn.commit()
+        return Student(*self.cur.execute('SELECT * FROM Students WHERE id = ?', (id,)).fetchone())
 
     def student_readAll(self):
-        self.cur.execute('SELECT * FROM Students')
-        for row in self.cur.fetchall():
-            print(row)
-        self.conn.commit()
+        rst = self.cur.execute('SELECT * FROM Students')
+        r_students = []
+        for e in rst:
+            r_students.append(Student(*e))
+        return r_students
 
     def student_remove_byID(self, id):
         self.cur.execute('DELETE FROM Students WHERE id = ?', (id,))
@@ -149,38 +154,25 @@ class Database:
 
 
 root = Database()
-'''
+
 if __name__ == '__main__':
-    root.execute((
-        r"""
-            CREATE TABLE IF NOT EXISTS students
-            (
-                id integer, 
-                name varchar(20),
-                gender varchar(2),
-                birthday date,
-                student_id varchar(20),
-                grade varchar(10),
-                class varchar(10)
-            );
-        """,))
+    root.create_studentsDB()
+    root.student_remove_byID(1)
+    root.student_clearAll()
+    student1 = Student(2, 'Jack', 'M', "2018.1.1", "37072333", "Grade 1", "Class 1")
+    root.student_entry(student1)
+    print(root.student_read_byID(2))
+    all = root.student_readAll()
+    for e in all:
+        print(e, end=", ")
+    print()
 
-    root.execute((
-        r"""
-            CREATE UNIQUE INDEX students_id_uindex ON `students` (id);
-        """,))
+    root.create_monitorsDB()
 
-root.create_studentsDB()
-root.student_remove_byID(1)
-root.student_clearAll()
-student1 = Student(None, 'b', 'aa', 2018, 1, 1, 1)
-root.student_entry(student1)
-root.student_read_byID(2)
-root.student_readAll()
+    root.monitor_clearAll()
 
-root.create_monitorsDB()
-monitor1 = Monitor(None, 'abc', 'abc', 'abc')
-root.monitor_readAll()
-'''
-print(root.monitor_readAll())
-root.clean()
+    monitor1 = Monitor(1, 'rtsp://127.0.0.1/', 'weifang', 'entrance')
+    root.monitor_entry(monitor1)
+    for e in root.monitor_readAll():
+        print(e)
+    root.clean()

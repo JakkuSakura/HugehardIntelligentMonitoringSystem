@@ -22,7 +22,7 @@ class MonitorSession:
             self.cap.open(self.connect_addr)
         else:
             self.cap = cv2.VideoCapture(self.connect_addr)
-            
+
         if not self.cap.isOpened():
             raise CamConnectError()
 

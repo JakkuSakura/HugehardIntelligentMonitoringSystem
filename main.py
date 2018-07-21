@@ -8,21 +8,19 @@ import Database
 class Backend:
     def __init__(self):
         self.is_running = True
+        self.monitor_entrance = MonitorPool()
         self.monitor_pool = MonitorPool()
         self.delay = 0.1
         self.database = Database.Database()
 
     def read_config(self):
-        for e in monitors:
-            self.monitor_pool.addMonitor(e)
+        for e in self.database.monitor_readAll():
+            if e.get_type() == 'entrance':
+                self.monitor_entrance.addMonitor(e)
+            else:
+                self.monitor_pool.addMonitor(e)
 
     def run(self):
-        def operate(monitor):
-            if monitor.type == 'entrance':
-                pass
-            else:
-                pass
-
         while self.is_running:
             self.monitor_pool.foreachMonitor(operate)
 
