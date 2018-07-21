@@ -1,3 +1,4 @@
+import copy
 import os
 import random
 
@@ -35,11 +36,11 @@ face_locations = []
 face_encodings = []
 face_names = []
 process_this_frame = True
-
+save_flag
 while True:
     # Grab a single frame of video
     ret, frame = video_capture.read()
-
+    frame_copy = copy.copy(frame)
     # Resize frame of video to 1/4 size for faster face recognition processing
     small_frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25)
 
@@ -90,8 +91,8 @@ while True:
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
     elif cv2.waitKey(1) & 0xFF == ord('s'):
-        id = input("person id here")
-        cv2.imwrite(os.path.join(path, id, "%d.jpg" % random.randint(0, 100)), frame)
+        id = input("input your person id")
+        cv2.imwrite(os.path.join(path, id, "%d.jpg" % random.randint(0, 100)), frame_copy)
 
 
 # Release handle to the webcam
