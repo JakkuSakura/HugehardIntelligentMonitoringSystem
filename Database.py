@@ -39,6 +39,18 @@ class Monitor:
         self.physical_location = physical_location
         self.type = type
 
+    def get_id(self):
+        return self.id
+    
+    def get_addr(self):
+        return self.addr
+
+    def get_physical_location(self):
+        return self.physical_location
+
+    def get_type(self):
+        return self.type
+
 class Database:
     def __init__(self):
         self.conn = sqlite3.connect("test.db")
