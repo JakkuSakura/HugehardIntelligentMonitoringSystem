@@ -1,14 +1,15 @@
 
 import cv2
-from Tools import NotCompleted, CamConnectError
+
+from Tools import CamConnectError
+
 
 class Monitor:
-    def __init__(self, id, addr, physical_location, type):
+    def __init__(self, id=None, addr=None, physical_location=None, type=None):
         self.id = id
         self.addr = addr
         self.physical_location = physical_location
         self.type = type
-        self.connect_addr = None
         self.cap = None
 
     def get_id(self):
@@ -31,14 +32,14 @@ class Monitor:
         :param addr: for instance:  rtsp://192.168.1.60/stream2
         :return:
         """
-        self.connect_addr = addr
+        self.addr = addr
 
     def connect(self):
-        if self.connect_addr.startwith("rtmp://"):
-            self.cap = cv2.VideoCapture()
-            self.cap.open(self.connect_addr)
-        else:
-            self.cap = cv2.VideoCapture(self.connect_addr)
+        # if self.addr.startswith("rtmp://"):
+        #     self.cap = cv2.VideoCapture()
+        #     self.cap.open(self.addr)
+        # else:
+        self.cap = cv2.VideoCapture(self.addr)
 
         if not self.cap.isOpened():
             raise CamConnectError()

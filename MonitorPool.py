@@ -1,11 +1,11 @@
 from typing import List
 
-from MonitorSession import MonitorSession
+from Monitor import Monitor
 
 
 class MonitorPool:
     def __init__(self):
-        self.monitors: List[MonitorSession] = []
+        self.monitors: List[Monitor] = []
 
     def addMonitor(self, monitor):
         self.monitors.append(monitor)
@@ -13,8 +13,7 @@ class MonitorPool:
     def getMonitor(self, index):
         return self.monitors[index]
 
-    def getMonitors(self):
-        return self.monitors
+    def foreachMonitor(self, func):
+        for e in self.monitors:
+            func(e)
 
-    def remove(self, monitor):
-        self.monitors.remove(monitor)
