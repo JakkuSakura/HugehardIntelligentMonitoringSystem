@@ -9,6 +9,7 @@ class Monitor:
         self.addr = addr
         self.physical_location = physical_location
         self.type = type
+        self.popu = 0
         self.cap = None
 
     def get_id(self):
@@ -26,7 +27,7 @@ class Monitor:
     def __str__(self):
         return "Monitor({}, {}, {}, {})".format(self.id, self.addr, self.physical_location, self.type)
 
-    def setAddr(self, addr):
+    def set_addr(self, addr):
         """
         :param addr: for instance:  rtsp://192.168.1.60/stream2
         :return:
@@ -42,6 +43,12 @@ class Monitor:
 
         if not self.cap.isOpened():
             raise CamConnectError()
+
+    def set_popu(self, p):
+        self.popu = p
+
+    def get_popu(self):
+        return self.popu
 
     def section(self):
         """
@@ -60,10 +67,13 @@ class Monitor:
         self.cap.release()
         cv2.destroyAllWindows()
 
+    def to_list(self):
+        return [self.id, self.addr, self.physical_location, self.type, self.popu]
+
 
 if __name__ == '__main__':
     session1 = Monitor()
-    session1.setAddr(0)
+    session1.set_addr(0)
     session1.connect()
     frame = session1.section()
     cv2.namedWindow("Image")

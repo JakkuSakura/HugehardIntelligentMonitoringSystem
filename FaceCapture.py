@@ -54,9 +54,11 @@ class FaceCapture:
                 np.save(encoding_file, encoding)
                 print("saved", encoding_file)
 
-    def read_img(self, img, frame_num):
+    def read_img(self, img, frame_num, monitor=None):
         # cv2.resize(img, (64, 64), interpolation=cv2.INTER_CUBIC)
         faces = self.machine_learning.face_split(img)
+        if monitor:
+            monitor.set_popu(len(faces))
         for e_face in faces:
             encodings = face_recognition.face_encodings(e_face)
             if encodings:

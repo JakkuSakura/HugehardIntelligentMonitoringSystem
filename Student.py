@@ -1,3 +1,6 @@
+from Monitor import Monitor
+
+
 class Student:
     def __init__(self, id=None, name="", gender="", birthday="", student_id="", grade="", clas=""):
         self.id = id
@@ -7,7 +10,14 @@ class Student:
         self.student_id = student_id
         self.grade = grade
         self.clas = clas
+        self.monitor_zone: Monitor = None
         self.encodings = []
+
+    def set_zone(self, monitor):
+        self.monitor_zone = monitor
+
+    def get_zone(self):
+        return self.monitor_zone
 
     def get_id(self):
         return self.id
@@ -32,6 +42,14 @@ class Student:
 
     def get_clas(self):
         return self.clas
+
+    def to_list(self):
+        lst = [self.id, self.name, self.gender, self.birthday, self.student_id, self.grade,
+               self.clas]
+        if self.monitor_zone:
+            return lst + self.monitor_zone.to_list()
+        else:
+            return lst
 
     def __str__(self):
         return "Student({}, {}, {}, {})".format(self.id, self.name, self.grade, self.clas)

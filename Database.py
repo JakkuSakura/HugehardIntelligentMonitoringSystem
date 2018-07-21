@@ -88,7 +88,7 @@ class Database:
     def student_max_id(self):
         return self.query('SELECT MAX(id) FROM Students').fetchone()[0]
 
-    def student_readAll(self):
+    def student_read_all(self):
         rst = self.execute('SELECT * FROM Students')
         r_students = []
         for e in rst:
@@ -141,7 +141,7 @@ if __name__ == '__main__':
     student1 = Student(2, 'Jack', 'M', "2018.1.1", "37072333", "Grade 1", "Class 1")
     root.student_entry(student1)
     print(root.student_read_by_id(2))
-    all = root.student_readAll()
+    all = root.student_read_all()
     for e in all:
         print(e, end=", ")
     print()

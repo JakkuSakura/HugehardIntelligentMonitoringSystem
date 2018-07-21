@@ -86,7 +86,7 @@ class Backend:
         while self.is_running:
             for e in self.monitor_pool.getMonitors():
                 frame = e.section()
-                self.face_capture.read_img(frame, frame_num)
+                self.face_capture.read_img(frame, frame_num, e)
 
             frame_num += 1
 
