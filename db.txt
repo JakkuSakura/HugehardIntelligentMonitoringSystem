@@ -1,0 +1,8 @@
+SELECT * FROM students
+CREATE TABLE monitors
+(
+    id integer PRIMARY KEY AUTOINCREMENT,
+    addr text,
+    psysics_location text
+);
+CREATE UNIQUE INDEX monitors_id_uindex ON monitors (id)
