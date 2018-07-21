@@ -26,47 +26,26 @@ class MonitorSession:
             This method shall be used to fetch a pic from a current monitor stream
         :return:
         """
-        '''
-        frame_num = 1
-        while self.cap.isOpened():
 
-            ret, frame = self.cap.read()
-
-            print(frame_num)
-
-            frame_num = frame_num + 1
-
-            cv2.imshow('frame', frame)
-
-            # 每10帧存储一张图片
-
-            if frame_num % 10 == 1:
-                cv2.imwrite('image' + str(frame_num) + '.jpg', frame)
-
-            if cv2.waitKey(1) == ord('q'):
-                break
-        '''
         if self.cap.isOpened():
-            frame = self.cap.read()
-            #cv2.imshow('frame', frame)
-            #cv2.imwrite('image' + str(frame_num) + '.jpg', frame)
+            flag, frame = self.cap.read()
+
             return frame
+        else:
+            raise CamConnectError()
 
     def clean(self):
         self.cap.release()
         cv2.destroyAllWindows()
 
+
 if __name__ == '__main__':
     session1 = MonitorSession()
-    session1.setAddr("rtmp://192.168.137.149/live")
+    session1.setAddr("rtsp://cloud.easydarwin.org:554/606034.sdp")
     session1.connect()
-    session1.section()
+    frame = session1.section()
+    cv2.namedWindow("Image")
+    cv2.imshow("Image", frame)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
     session1.clean()
-    '''
-    session2 = MonitorSession()
-    session2.setAddr("rtmp://192.168.137.149/live")
-    session2.connect()
-    session2.section()
-    session2.clean()
-    '''
-
