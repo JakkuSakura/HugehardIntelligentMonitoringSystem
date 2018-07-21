@@ -1,5 +1,5 @@
 class Student:
-    def __init__(self, id, name, gender, birthday, student_id, grade, clas):
+    def __init__(self, id=None, name="", gender="", birthday="", student_id="", grade="", clas=""):
         self.id = id
         self.name = name
         self.gender = gender
@@ -7,6 +7,7 @@ class Student:
         self.student_id = student_id
         self.grade = grade
         self.clas = clas
+        self.encodings = []
 
     def get_id(self):
         return self.id

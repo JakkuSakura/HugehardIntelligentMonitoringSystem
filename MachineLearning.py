@@ -1,3 +1,5 @@
+import random
+
 import face_recognition
 import cv2
 import argparse
@@ -23,12 +25,21 @@ class MachineLearning:
         face_encodings = face_recognition.face_encodings(image)
         return face_encodings
 
-    def face_compare(self, face_encoding_list, face_encoding, tolerance=0.4):
-        matches = face_recognition.compare_faces(face_encoding_list, face_encoding, tolerance=tolerance)
-        if True in matches:
-            first_match_index = matches.index(True)
-            return first_match_index
-        return -1
+    def face_compare(self, students_list, face_encoding, tolerance=0.4):
+
+        for e in students_list:
+            l = len(e.encodings)
+
+            n = random.randint(min(2, l), max(5, l))
+            num = 0
+            for _ in range(n):
+                encoding = e.encodings[random.randint(0, l)]
+                matches = face_recognition.compare_faces([encoding], face_encoding, tolerance=tolerance)
+                if True in matches:
+                    num += 1
+            if num >= n / 2:
+                return e
+        return None
 
     def face_split(self, frame):
         locations = face_recognition.face_locations(frame)
