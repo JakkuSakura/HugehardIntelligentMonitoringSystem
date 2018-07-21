@@ -1,16 +1,26 @@
+import threading
+import time
+
 import cv2
 
 from Tools import CamConnectError
 
 
-class Monitor:
+class Monitor(threading.Thread):
     def __init__(self, id=None, addr=None, physical_location=None, type=None):
+        super().__init__()
         self.id = id
         self.addr = addr
         self.physical_location = physical_location
         self.type = type
         self.popu = 0
+        self.cache = None
         self.cap = None
+
+    def get_cache(self):
+        while self.cache is None:
+            time.sleep(0.1)
+        return self.cache
 
     def get_id(self):
         return self.id
@@ -49,6 +59,15 @@ class Monitor:
 
     def get_popu(self):
         return self.popu
+
+    def run(self):
+        try:
+            self.connect()
+            while True:
+                self.cache = self.section()
+                time.sleep(0.1)
+        finally:
+            self.clean()
 
     def section(self):
         """

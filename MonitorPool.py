@@ -20,3 +20,6 @@ class MonitorPool:
     def getMonitors(self):
         return self.monitors
 
+    def startAll(self):
+        for e in self.monitors:
+            e.start()

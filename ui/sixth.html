@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <base href="<%=basePath%>">
+    <meta charset="utf-8">
+    <title>一根不孤独的柱子</title>
+    <!-- 引入 echarts.js -->
+    <style type="text/css">
+        * {
+            margin: 0px;
+            padding: 0px;
+        }
+
+        body table {
+            border: 1px solid black;
+        }
+
+        th {
+            border: 1px solid black;
+            text-align: center;
+            width: 400px;
+            height: 30px;
+        }
+
+        td {
+            border: 1px solid black;
+            text-align: center;
+        }
+
+    </style>
+
+    <script src="echarts.js"></script>
+    <script src="jquery.js"></script>
+
+</head>
+
+<body>
+<!-- 为ECharts准备一个具备大小（宽高）的Dom -->
+<div id="main" style="width: 600px;height:400px;"></div>
+<script src="jquery.js"></script>
+<script type="text/javascript">
+
+    function main() {
+        $.ajax({
+            type: "GET",
+            url: "http://10.11.131.105/monitors",
+            dataType: "json",
+            success: reset_boxes
+        });
+    }
+
+    function reset_boxes(result) {
+
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById('main'));
+        // 点击响应事件
+        /*
+                    function eConsole(param) {
+                        switch (param.dataIndex) {
+                            case 0: //柱子1
+                                alert("h")
+                                break;
+                            case 1: //柱子2
+                                alert("hh")
+                                break;
+                            case 2: //柱子3
+                                alert("hhh")
+                                break;
+                            case 3: //柱子3
+                                alert("hhhh")
+                                break;
+                            case 4: //柱子3
+                                alert("hhhhh")
+                                break;
+                            default:
+                                alert("hhhhhh")
+                                break;
+
+                        }
+                    }
+                    myChart.on('click', eConsole);
+
+        */
+        datas = [[], [], [], [], []];
+        $.each(result, function (i, e) {
+            for (let j = 0; j < e.length; j++) {
+                datas[j].append(e[j]);
+            }
+        });
+
+        // 指定图表的配置项和数据
+        var option = {
+            title: {
+                text: '几根孤独的柱子',
+                left: '20px',
+                textStyle: {
+                    color: "#436EEE",
+                    fontsize: 17,
+                }
+            },
+            tooltip: {
+                trigger: "axis",
+            },
+            legend: {
+                itemWidth: 15,
+                itemHeight: 15,
+                data: ['学生数', '陌生人数']
+            },
+            xAxis: {
+                data: datas[2],
+                splitLine: {
+                    show: false,
+                },
+            },
+            yAxis: {
+                splitLine: {
+                    show: false,
+                },
+            },
+            series: [{
+                name: '学生数',
+                type: 'bar',
+                stack: '人数',
+                data: datas[4],
+                itemStyle: {
+                    normal: {
+                        color: "green"
+                    },
+                }
+            }, {
+                name: '陌生人数',
+                type: 'bar',
+                stack: '人数',
+                data: [0, 0, 0, 0, 0, 0],
+                itemStyle: {
+                    normal: {
+                        color: "red"
+                    },
+                }
+            }]
+        };
+
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+        setTimeout("reset_boxes()", 5000);
+    }
+
+    function data() {
+        var str = "[{'id':'tom','address':'3500','location':'25','type':'1','count':'2'},{'id':'jphn','address':'3800','location':'25','type':'1','count':'2'},{'id':'mary','address':'3600','location':'25','type':'1','count':'2'}]";
+        var jsonObject = eval('(' + str + ')');
+
+        for (var i = 0; i < jsonObject.length; i++) {
+            var tr = document.createElement('tr');
+            var tdid = document.createElement('td')
+            var tdaddress = document.createElement('td')
+            var tdlocation = document.createElement('td')
+            var tdtype = document.createElement('td')
+            var tdcount = document.createElement('td')
+
+            tdid.innerHTML = jsonObject[i].id;
+            tdaddress.innerHTML = jsonObject[i].address;
+            tdlocation.innerHTML = jsonObject[i].location;
+            tdtype.innerHTML = jsonObject[i].type;
+            tdcount.innerHTML = jsonObject[i].count;
+
+            tr.appendChild(tdid);
+            tr.appendChild(tdaddress);
+            tr.appendChild(tdlocation);
+            tr.appendChild(tdtype);
+            tr.appendChild(tdcount);
+
+            var tbody = document.getElementById('tbody');
+            tbody.appendChild(tr);
+        }
+    }
+
+    function cancel() {
+        document.form1.ename.value = "";
+    }
+
+    function cmdok_onclick() {
+        var ename = document.form1.ename.value;
+
+    }
+
+    main();
+
+
+</script>
+<h1>title</h1>
+<div>
+    <table>
+        <thead>
+        <tr>
+            <th>id</th>
+            <th>address</th>
+            <th>location</th>
+            <th>type</th>
+            <th>count</th>
+            <th><input type='button' value='导入数据' onclick="data()"></th>
+        </tr>
+        </thead>
+        <tbody id='tbody'></tbody>
+    </table>
+</div>
+<div>
+    <form action="" name="form1">
+        请输入查询人名：
+        <input type="text" name="ename">
+        <input type="button" name="查询" value="查询" onClick="cmdok_onclick()">
+        <input type="button" name="重置" value="重置" onClick="cancel()">
+    </form>
+</div>
+
+</body>
+
+</html>

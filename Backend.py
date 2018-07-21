@@ -28,7 +28,9 @@ class Backend(threading.Thread):
 
     def read_config(self):
         for e in self.database.monitor_read_all():
-            self.monitor_pool.addMonitor(e)
+            if e.type != "disabled":
+                self.monitor_pool.addMonitor(e)
+                print(e, end=',')
 
     def read_encodings(self):
 
@@ -87,28 +89,28 @@ class Backend(threading.Thread):
         cv2.destroyAllWindows()
 
     def run(self):
-        for e in self.monitor_pool.getMonitors():
-            e.connect()
-
+        self.monitor_pool.startAll()
+        cv2.namedWindow("show")
         frame_num = 0
         while self.is_running:
             for e in self.monitor_pool.getMonitors():
-                frame = e.section()
+                frame = e.get_cache()
                 self.face_capture.read_img(frame, frame_num, e)
+                cv2.imshow("show", frame)
             time.sleep(self.delay)
             if frame_num % 1000 == 0:
                 print("running")
             frame_num += 1
 
-        for e in self.monitor_pool.getMonitors():
-            e.clean()
-
 
 if __name__ == '__main__':
     print("start backend")
     backend = Backend()
+    print("reading configs")
+    backend.read_config()
     print("reading encodings")
     backend.read_encodings()
     # backend.open_capture()
+    print("started backend")
     backend.start()
     api.app.run(host="0.0.0.0", port=81)

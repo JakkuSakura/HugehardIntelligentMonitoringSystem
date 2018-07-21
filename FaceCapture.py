@@ -55,7 +55,7 @@ class FaceCapture:
                 print("saved", encoding_file)
 
     def read_img(self, img, frame_num, monitor=None):
-        # cv2.resize(img, (64, 64), interpolation=cv2.INTER_CUBIC)
+        cv2.resize(img, (64, 64), interpolation=cv2.INTER_CUBIC)
         faces = self.machine_learning.face_split(img)
         if monitor:
             monitor.set_popu(len(faces))
