@@ -1,18 +1,22 @@
 import os
+import threading
+import time
 
 import cv2
 import face_recognition
 import numpy
 
 import Database
+import api
 from FaceCapture import FaceCapture
 from MachineLearning import MachineLearning
 from MonitorPool import MonitorPool
 from Student import Student
 
 
-class Backend:
+class Backend(threading.Thread):
     def __init__(self):
+        super().__init__()
         self.is_running = True
         self.monitor_pool = MonitorPool()
         self.tolerance = 0.3
@@ -20,6 +24,7 @@ class Backend:
         self.students = []
         self.machine_learning = MachineLearning()
         self.face_capture = FaceCapture(self.database, self.machine_learning, self.students)
+        self.delay = 0.01
 
     def read_config(self):
         for e in self.database.monitor_read_all():
@@ -82,16 +87,28 @@ class Backend:
         cv2.destroyAllWindows()
 
     def run(self):
+        for e in self.monitor_pool.getMonitors():
+            e.connect()
+
         frame_num = 0
         while self.is_running:
             for e in self.monitor_pool.getMonitors():
                 frame = e.section()
                 self.face_capture.read_img(frame, frame_num, e)
-
+            time.sleep(self.delay)
+            if frame_num % 1000 == 0:
+                print("running")
             frame_num += 1
+
+        for e in self.monitor_pool.getMonitors():
+            e.clean()
 
 
 if __name__ == '__main__':
+    print("start backend")
     backend = Backend()
+    print("reading encodings")
     backend.read_encodings()
-    backend.open_capture()
+    # backend.open_capture()
+    backend.start()
+    api.app.run(host="0.0.0.0", port=81)
