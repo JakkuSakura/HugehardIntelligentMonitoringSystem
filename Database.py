@@ -28,7 +28,7 @@ class Database:
         return rst.fetchone()
 
     def monitor_readAll(self):
-        monitors = self.query('SELECT * FROM monitors').fetchall()
+        monitors = self.query(('SELECT * FROM monitors',)).fetchall()
         r_monitors = []
         for e in monitors:
             r_monitors.append(Monitor(*e))
@@ -43,7 +43,7 @@ class Database:
     def create_studentsDB(self):
         self.execute((
             """
-                CREATE TABLE IF NOT EXISTS Students
+                CREATE TABLE IF NOT EXISTS students
                 (
                     id integer PRIMARY KEY AUTOINCREMENT, 
                     name varchar(20),
@@ -100,6 +100,36 @@ class Database:
     def student_clearAll(self):
         self.execute(('DELETE FROM Students',))
 
+    def create_eventsDB(self):
+        self.execute(("""CREATE TABLE IF NOT EXISTS events
+                            (
+                                id integer PRIMARY KEY AUTOINCREMENT, 
+                                student_id integer
+                                appeartime datetime
+                                monitor_id integer
+                            )
+                        """,))
+
+    def event_entry(self, event):
+        self.execute(("""INSERT INTO event VALUES (?,?,?,?)""", (
+            event.id, event.student_id, event.appeartime, event.event_id),))
+
+    def event_read_byID(self, id):
+        rst = self.query(('SELECT * FROM events WHERE id = ?', (id,),))
+        return rst.fetchone()
+
+    def event_readAll(self):
+        events = self.query('SELECT * FROM events').fetchall()
+        r_events = []
+        for e in events:
+            r_events.append(event(*e))
+        return r_events
+
+    def event_remove_byID(self, id):
+        self.execute(('DELETE FROM events WHERE id = ?', (id,),))
+
+    def event_clearAll(self):
+        self.execute(('DELETE FROM events',))
 
 if __name__ == '__main__':
     root = Database()
@@ -122,4 +152,5 @@ if __name__ == '__main__':
     root.monitor_entry(monitor1)
     for e in root.monitor_readAll():
         print(e)
+    root.create_eventsDB()
     root.clean()
