@@ -11,6 +11,9 @@ class Student:
     def get_id(self):
         return self.id
 
+    def set_id(self, id):
+        self.id = id
+
     def get_name(self):
         return self.name
 
@@ -31,4 +34,3 @@ class Student:
 
     def __str__(self):
         return "Student({}, {}, {}, {})".format(self.id, self.name, self.grade, self.clas)
-
