@@ -1,3 +1,5 @@
+import sqlite3
+
 class Event:
     def __init__(self, id, student_id, appeartime, monitor_id):
         self.id = id
@@ -28,6 +30,19 @@ class Event:
 
     def set_monitor_id(self, get_monitor_id):
         self.get_monitor_id = get_monitor_id
+
+    def search_id(self,id_0):
+        import sqlite3
+        conn = sqlite3.connect('test.db')
+        c = conn.execute()
+        print ("Opened database successfully")
+        cursor = c.execute("SELECT id, appeartime, monitor_id  from event")
+        for row in cursor:
+            if(id == id_0):
+                print("ID = ", id_0)
+                print("At ", row[1])
+                print("The person was in the monitoring of", row[2], "\n")
+        conn.close()
 
     def __str__(self):
         return "Event({}, {}, {}, {})".format(self.id, self.student_id, self.appeartime, self.monitor_id)
