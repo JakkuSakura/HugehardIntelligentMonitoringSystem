@@ -49,8 +49,7 @@ class Backend:
         face_names = []
         while True:
             ret, frame = video_capture.read()
-            print(ret, frame)
-            if frame_num % 7 == 0:
+            if frame_num % 5 == 0:
                 face_locations = face_recognition.face_locations(frame)
                 face_encodings = face_recognition.face_encodings(frame, face_locations)
                 self.face_capture.read_img(frame, frame_num)
@@ -59,9 +58,9 @@ class Backend:
 
                 for face_encoding in face_encodings:
                     # See if the face is a match for the known face(s)
-                    rst = self.machine_learning.face_compare(self.students, face_encoding)
+                    rst = self.machine_learning.face_compare(self.students, face_encoding, tolerance=self.tolerance)
                     if rst:
-                        face_names.append(rst.get_id())
+                        face_names.append(str(rst.get_id()))
 
             for (top, right, bottom, left), name in zip(face_locations, face_names):
                 cv2.rectangle(frame, (left, top), (right, bottom), (0, 0, 255), 2)

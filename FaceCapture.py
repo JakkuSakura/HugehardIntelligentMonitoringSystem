@@ -34,7 +34,7 @@ class FaceCapture:
             os.mkdir(encoding_path)
 
         person_list = os.listdir(encoding_path)  # 列出文件夹下所有的目录与文件
-        if random.randint(0, len(person_list) * len(person_list)) > 20:
+        if random.randint(0, len(person_list) * len(person_list)) > 50:
             return
         for gamma_int in range(5, 16, 5):
             gamma = gamma_int / 10
@@ -55,20 +55,21 @@ class FaceCapture:
                 print("saved", encoding_file)
 
     def read_img(self, img, frame_num):
+        # cv2.resize(img, (64, 64), interpolation=cv2.INTER_CUBIC)
         faces = self.machine_learning.face_split(img)
         for e_face in faces:
             encodings = face_recognition.face_encodings(e_face)
             if encodings:
                 encoding = encodings[0]
-
                 rst = self.machine_learning.face_compare(self.students, encoding)
-                if rst == -1:
+                if not rst:
                     stu = Student(None, "Unkonwn", "", "", "", "", "")
                     self.database.student_entry(stu)
                     stu.set_id(self.database.student_max_ID())
+                    self.students.append(stu)
 
                 else:
-                    stu = self.students[rst]
+                    stu = rst
 
                 self.save_file(img, stu)
 

@@ -29,16 +29,17 @@ class MachineLearning:
 
         for e in students_list:
             l = len(e.encodings)
-
-            n = random.randint(min(2, l), max(5, l))
-            num = 0
-            for _ in range(n):
-                encoding = e.encodings[random.randint(0, l)]
-                matches = face_recognition.compare_faces([encoding], face_encoding, tolerance=tolerance)
-                if True in matches:
-                    num += 1
-            if num >= n / 2:
-                return e
+            if l > 0:
+                n = min(10, l)
+                num = 0
+                for _ in range(n):
+                    idx = random.randint(0, l - 1)
+                    encoding = e.encodings[idx]
+                    matches = face_recognition.compare_faces([encoding], face_encoding, tolerance=tolerance)
+                    if True in matches:
+                        num += 1
+                if num >= n * .4:
+                    return e
         return None
 
     def face_split(self, frame):
