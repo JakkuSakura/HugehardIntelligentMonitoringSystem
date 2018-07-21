@@ -46,7 +46,7 @@ class MonitorSession:
 
 if __name__ == '__main__':
     session1 = MonitorSession()
-    session1.setAddr("rtsp://cloud.easydarwin.org:554/606034.sdp")
+    session1.setAddr("rtmp://192.168.137.149/live")
     session1.connect()
     frame = session1.section()
     cv2.namedWindow("Image")
