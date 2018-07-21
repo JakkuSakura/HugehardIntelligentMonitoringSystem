@@ -1,16 +1,9 @@
 import os
+import random
 
+import Database
 import face_recognition
 import cv2
-
-# This is a demo of running face recognition on live video from your webcam. It's a little more complicated than the
-# other example, but it includes some basic performance tweaks to make things run a lot faster:
-#   1. Process each video frame at 1/4 resolution (though still display it at full resolution)
-#   2. Only detect faces in every other frame of video.
-
-# PLEASE NOTE: This example requires OpenCV (the `cv2` library) to be installed only to read from your webcam.
-# OpenCV is *not* required to use the face_recognition library. It's only required if you want to run this
-# specific demo. If you have trouble installing it, try any of the other demos that don't require it instead.
 
 
 # Load a sample picture and learn how to recognize it.
@@ -20,13 +13,17 @@ known_face_names = []
 
 path = 'image'
 list = os.listdir(path)  # 列出文件夹下所有的目录与文件
-for i, e in enumerate(list):
-    e_path = os.path.join(path, e)
-    if os.path.isfile(e_path):
-        image = face_recognition.load_image_file(e_path)
-        encoding = face_recognition.face_encodings(image)[0]
-        known_face_encodings.append(encoding)
-        known_face_names.append(e)
+for i, person_id in enumerate(list):
+    person_img_path = os.path.join(path, person_id)
+    for i2, pics in enumerate(os.listdir(person_img_path)):
+        e2_path = os.path.join(person_img_path, pics)
+        if os.path.isfile(e2_path):
+            result = Database.root.query((r"SELECT * FROM `students` WHERE `id`=?", (person_id,)))
+            image = face_recognition.load_image_file(e2_path)
+            encoding = face_recognition.face_encodings(image)[0]
+            known_face_encodings.append(encoding)
+
+            known_face_names.append(result.fetchall()[0][1])
 
 
 # Get a reference to webcam #0 (the default one)
@@ -92,6 +89,10 @@ while True:
     # Hit 'q' on the keyboard to quit!
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
+    elif cv2.waitKey(1) & 0xFF == ord('s'):
+        id = input("person id here")
+        cv2.imwrite(os.path.join(path, id, "%d.jpg" % random.randint(0, 100)), frame)
+
 
 # Release handle to the webcam
 video_capture.release()
