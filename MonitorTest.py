@@ -36,7 +36,8 @@ face_locations = []
 face_encodings = []
 face_names = []
 process_this_frame = True
-save_flag
+save_to = None
+save_to_num = 10
 while True:
     # Grab a single frame of video
     ret, frame = video_capture.read()
@@ -90,9 +91,6 @@ while True:
     # Hit 'q' on the keyboard to quit!
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
-    elif cv2.waitKey(1) & 0xFF == ord('s'):
-        id = input("input your person id")
-        cv2.imwrite(os.path.join(path, id, "%d.jpg" % random.randint(0, 100)), frame_copy)
 
 
 # Release handle to the webcam
