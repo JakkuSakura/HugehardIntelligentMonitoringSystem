@@ -1,6 +1,8 @@
 import sqlite3
+
+
 class Student:
-    def __init__(self,id, name, gender, birthday, student_id, grade, clas):
+    def __init__(self, id, name, gender, birthday, student_id, grade, clas):
         self.id = id
         self.name = name
         self.gender = gender
@@ -36,6 +38,16 @@ class Database:
         self.conn = sqlite3.connect("test.db")
         self.cur = self.conn.cursor()
 
+    def create_monitorsDB(self):
+        self.cur.execute("""CREATE TABLE IF NOT EXISTS monitors 
+                            (
+                                id integer PRIMARY KEY AUTOINCREMENT, 
+                                addr text, 
+                                physical_location text
+                            )
+                        """)
+        self.conn.commit()
+
     def create_studentsDB(self):
         self.cur.execute(
             """
@@ -51,6 +63,7 @@ class Database:
                 )
             """)
         self.conn.commit()
+
     '''
     def execute(self, sql):
         result = self.cur.execute(*sql)
@@ -60,12 +73,14 @@ class Database:
     def query(self, sql):
         return self.cur.execute(*sql)
     '''
+
     def clean(self):
         self.cur.close()
         self.conn.close()
 
     def student_entry(self, student):
-        self.cur.execute("""INSERT INTO Students VALUES (?,?,?,?,?,?,?)""",(student.id,student.name,student.gender,student.birthday,student.student_id,student.grade,student.clas))
+        self.cur.execute("""INSERT INTO Students VALUES (?,?,?,?,?,?,?)""", (
+        student.id, student.name, student.gender, student.birthday, student.student_id, student.grade, student.clas))
         self.conn.commit()
 
     def student_read_byID(self, id):
@@ -81,7 +96,11 @@ class Database:
         self.conn.commit()
 
     def student_remove(self, id):
-        self.cur.execute('DELETE FROM Students WHERE id = ?',(id,))
+        self.cur.execute('DELETE FROM Students WHERE id = ?', (id,))
+        self.conn.commit()
+
+    def student_clear(self):
+        self.cur.execute('DELETE FROM Students')
         self.conn.commit()
 
 
@@ -108,9 +127,10 @@ if __name__ == '__main__':
         """,))
 '''
 root.create_studentsDB()
-#root.student_remove(1)
-student1 = Student(1,'a','aa',2018,1,1,1)
-#root.student_entry(student1)
-root.student_read_byID(2)
-#root.student_readAll()
+# root.student_remove(1)
+# root.student_clear()
+student1 = Student(None, 'b', 'aa', 2018, 1, 1, 1)
+root.student_entry(student1)
+# root.student_read_byID(2)
+root.student_readAll()
 root.clean()
