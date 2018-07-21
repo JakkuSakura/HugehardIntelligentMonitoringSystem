@@ -17,7 +17,12 @@ class MonitorSession:
         self.connect_addr = addr
 
     def connect(self):
-        self.cap = cv2.VideoCapture(self.connect_addr)
+        if self.connect_addr.startwith("rtmp://"):
+            self.cap = cv2.VideoCapture()
+            self.cap.open(self.connect_addr)
+        else:
+            self.cap = cv2.VideoCapture(self.connect_addr)
+            
         if not self.cap.isOpened():
             raise CamConnectError()
 
