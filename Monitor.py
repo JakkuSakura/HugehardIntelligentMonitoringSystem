@@ -1,4 +1,3 @@
-
 import cv2
 
 from Tools import CamConnectError
@@ -64,7 +63,7 @@ class Monitor:
 
 if __name__ == '__main__':
     session1 = Monitor()
-    session1.setAddr("rtmp://192.168.137.149/live")
+    session1.setAddr(0)
     session1.connect()
     frame = session1.section()
     cv2.namedWindow("Image")

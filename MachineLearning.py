@@ -24,28 +24,28 @@ class MachineLearning:
         return face_encodings
 
     def face_compare(self, face_encoding_list, face_encoding, tolerance=0.4):
-        results = face_recognition.compare_faces(face_encoding_list, face_encoding, tolerance=tolerance)
-        for i, e in enumerate(results):
-            if e:
-                return i
-        else:
-            return -1
+        matches = face_recognition.compare_faces(face_encoding_list, face_encoding, tolerance=tolerance)
+        if True in matches:
+            first_match_index = matches.index(True)
+            return first_match_index
+        return -1
 
     def face_split(self, frame):
         locations = face_recognition.face_locations(frame)
         spt = []
         for location in locations:
-            print(location)
+            # print(location)
             roi = frame[location[0]:location[2], location[3]:location[1]]
             spt.append(roi)
         return spt
 
 
 if __name__ == '__main__':
-    img = cv2.imread("233.png")
-    img2 = MachineLearning().face_split(img)[0]
-    cv2.namedWindow('img')
-    cv2.imshow('img', img2)
-    cv2.waitKey(0)
+    # img = cv2.imread("233.png")
+    # img2 = MachineLearning().face_split(img)[0]
+    # cv2.namedWindow('img')
+    # cv2.imshow('img', img2)
+    # cv2.waitKey(0)
     # ml = MachineLearning()
     # print(ml.face_location("image/4.jpg"))
+    pass

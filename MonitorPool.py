@@ -17,3 +17,6 @@ class MonitorPool:
         for e in self.monitors:
             func(e)
 
+    def getMonitors(self):
+        return self.monitors
+

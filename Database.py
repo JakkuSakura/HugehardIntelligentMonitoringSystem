@@ -85,10 +85,10 @@ class Database:
             return None
 
     def student_max_ID(self):
-        return self.query('SELECT MAX(id) FROM Students')
+        return self.query(('SELECT MAX(id) FROM Students',)).fetchone()[0]
 
     def student_readAll(self):
-        rst = self.execute('SELECT * FROM Students')
+        rst = self.execute(('SELECT * FROM Students',))
         r_students = []
         for e in rst:
             r_students.append(Student(*e))
@@ -98,7 +98,7 @@ class Database:
         self.execute(('DELETE FROM Students WHERE id = ?', (id,)))
 
     def student_clearAll(self):
-        self.execute(('DELETE FROM Students'))
+        self.execute(('DELETE FROM Students',))
 
 
 if __name__ == '__main__':
