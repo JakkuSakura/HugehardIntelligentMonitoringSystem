@@ -13,12 +13,13 @@ class Backend:
     def __init__(self):
         self.is_running = True
         self.monitor_pool = MonitorPool()
-        self.delay = 0.1
+        self.tolerance = 0.3
         self.database = Database.Database()
         self.known_face_encodings = []
         self.students_id = []
         self.machine_learning = MachineLearning()
-        self.face_capture = FaceCapture(self.database, self.machine_learning)
+        self.face_capture = FaceCapture(self.database, self.machine_learning, self.known_face_encodings,
+                                        self.students_id)
 
     def read_config(self):
         for e in self.database.monitor_readAll():
@@ -44,35 +45,37 @@ class Backend:
     def open_capture(self):
 
         video_capture = cv2.VideoCapture(0)
-
+        frame_num = 0
+        face_locations = []
+        face_names = []
         while True:
             # Grab a single frame of video
             ret, frame = video_capture.read()
 
-            # Find all the faces and face encodings in the current frame of video
-            face_locations = face_recognition.face_locations(frame)
-            face_encodings = face_recognition.face_encodings(frame, face_locations)
+            if frame_num % 5 == 0:
+                # Find all the faces and face encodings in the current frame of video
+                face_locations = face_recognition.face_locations(frame)
+                face_encodings = face_recognition.face_encodings(frame, face_locations)
 
-            face_names = []
-            for face_encoding in face_encodings:
-                # See if the face is a match for the known face(s)
-                matches = face_recognition.compare_faces(self.known_face_encodings, face_encoding)
+                self.face_capture.read_img(frame, frame_num)
 
-                if True in matches:
-                    first_match_index = matches.index(True)
-                    name = str(self.students_id[first_match_index])
-                else:
-                    name = "Unknown"
+                face_names = []
 
-                face_names.append(name)
+                for face_encoding in face_encodings:
+                    # See if the face is a match for the known face(s)
+                    matches = face_recognition.compare_faces(self.known_face_encodings, face_encoding,
+                                                             tolerance=self.tolerance)
+
+
+                    if True in matches:
+                        first_match_index = matches.index(True)
+                        name = str(self.students_id[first_match_index])
+                    else:
+                        name = "Unknown"
+
+                    face_names.append(name)
 
             for (top, right, bottom, left), name in zip(face_locations, face_names):
-                # Scale back up face locations since the frame we detected in was scaled to 1/4 size
-                top *= 4
-                right *= 4
-                bottom *= 4
-                left *= 4
-
                 # Draw a box around the face
                 cv2.rectangle(frame, (left, top), (right, bottom), (0, 0, 255), 2)
 
@@ -83,6 +86,7 @@ class Backend:
 
             # Display the resulting image
             cv2.imshow('Video', frame)
+            frame_num += 1
 
             # Hit 'q' on the keyboard to quit!
             if cv2.waitKey(1) & 0xFF == ord('q'):
